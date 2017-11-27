@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DemoP</title>
+    <link rel="stylesheet" href="css/reset.min.css">
+    <link rel="stylesheet" href="css/layout2.css">
+    <script src="js/jquery.min.js"></script>
+    <script>
+        /**控制rem自适应js**/
+        !function (n){var e = n.document,t = e.documentElement,i = 375,d = i / 20,o ="orientationchange"in n ? "orientationchange":"resize",a = function (){var n = t.clientWidth || 320;n > 768 && (n = 768),t.style.fontSize = n / d + "px"};e.addEventListener && (n.addEventListener(o,a,!1),e.addEventListener("DOMContentLoaded",a,!1))}(window);
+
+        $(function () {
+
+            var g,v,startX;
+            /**刻度条初始化为0**/
+            $('.timer').css({
+                '-webkit-transform':'translateX(0)'
+            }).attr('value',0);
+
+            /**触摸刻度条时**/
+            $('.timer').on("touchstart",function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                var  initial = $(this).attr('data-initial');
+                v = parseInt($(this).attr('value'));
+                g = 118;
+
+                /**控制每次触摸刻度条，从上次结束地方开始滑动**/
+                if(initial == 'true'){
+                    startX = e.originalEvent.changedTouches[0].pageX+v;
+                    $(this).attr('data-initial','false');
+                }else{
+                    startX = e.originalEvent.changedTouches[0].pageX-v;
+                }
+            });
+            /**刻度条开始滑动时**/
+            $('.timer').on("touchmove",function(e){
+                e.preventDefault();
+                var number = parseInt($('.timeValue').attr('value'));
+                var moveX = e.originalEvent.changedTouches[0].pageX;
+                var X = moveX - startX;
+                var val = (number+Math.abs(X/g)).toFixed(2);
+                if(X>0){
+                    /**往左滑动时**/
+                    /**当刻度为0的时候禁止左滑**/
+                    if(val>-0.65){
+                        $(this).css({
+                            '-webkit-transform':'translateX(0rem)',
+                            '-webkit-transition':'all 1s !important'
+                        }).attr('value',0);
+                        $('.timeValue').text("0.00片");
+                    }
+                    if(val>0){
+                        return
+                    }
+                    /**滑动标尺**/
+                    $(this).css({
+                        '-webkit-transform':'translateX('+ (X/20) +'rem)',
+                        '-webkit-transition':'all 1s !important'
+                    }).attr('value',X);
+
+                }else{
+                    /**往右滑动时**/
+                    /**当刻度为 10 的时候禁止右滑**/
+                    if(val>9.76){
+                        $(this).css({
+                            '-webkit-transform':'translateX(-59rem)',
+                            '-webkit-transition':'all 1s !important'
+                        }).attr('value',-1180);
+                        $('.timeValue').text("10.00片");
+                    }
+                    if(val>10){
+                        return
+                    }
+                    /**滑动标尺**/
+                    $(this).css({
+                        '-webkit-transform':'translateX('+ (X/20) +'rem)',
+                        '-webkit-transition':'all 1s !important'
+                    }).attr('value',X);
+
+                }
+                /**控制分钟**/
+                $('.timeValue').text(val + "片");
+
+            });
+
+            $('.timer').on("touchend",function(e){
+                e.stopPropagation();
+                var moveEndX = e.originalEvent.changedTouches[0].pageX;
+                var X = moveEndX - startX;
+                var roundX = Math.round(X/29.5)*29.5;
+                /**当刻度为0的时候禁止左滑**/
+                /**当刻度为 10 的时候禁止右滑**/
+                if(roundX>0){
+                    return;
+                }else if(roundX<-1180){
+                    return;
+                }
+                /** 当刻度不到1小于0.5的时候后退 大于0.5小于1前进*/
+                $(this).css({
+                    '-webkit-transform':'translateX('+ (roundX/20) +'rem)'
+                }).attr('value',roundX);
+                $('.timeValue').text(Math.abs(roundX/g).toFixed(2) + "片");
+
+            });
+
+
+        })
+    </script>
+</head>
+<body style="background:#16467b">
+<div class="wrap">
+    <p class="title-text">持续时长</p>
+    <div class="timeValue" initial-value="12" value="0">0.00片</div>
+    <input type="hidden" name="first_screen" value="30##150##50">
+    <div class="timer-wrap">
+        <div class="timer" value="0" data-initial='true'>
+            <ul>
+                <li style="color:#eee;">s</li>
+                <li style="color:#eee;">s</li>
+                <li style="color:#eee;">s</li>
+                <li style="color:#eee;">s</li>
+                <li style="color:#eee;">s</li>
+                <li class="whole" style="text-indent: 1.14rem;">0</li>
+                <li></li>
+                <li>0.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">1</li>
+                <li></li>
+                <li>1.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">2</li>
+                <li></li>
+                <li>2.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">3</li>
+                <li></li>
+                <li>3.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">4</li>
+                <li></li>
+                <li>4.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">5</li>
+                <li></li>
+                <li><5.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">6</li>
+                <li></li>
+                <li>6.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">7</li>
+                <li></li>
+                <li>7.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">8</li>
+                <li></li>
+                <li>8.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 1.14rem;">9</li>
+                <li></li>
+                <li>9.5</li>
+                <li></li>
+                <li class="whole" style="text-indent: 0.9rem;">10</li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+
+            </ul>
+        </div>
+        <div class="mark"></div>
+    </div>
+
+</div>
+
+</body>
+</html>
